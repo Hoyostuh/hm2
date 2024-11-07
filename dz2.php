@@ -4,7 +4,7 @@ function displayMessages($file) {
     if (file_exists($file)) {
         $messages = array_reverse(file($file));
         foreach ($messages as $message) {
-            echo nl2br(htmlspecialchars($message)) . "<hr>";
+        echo '<div>' . nl2br(htmlspecialchars($message)) . '</div><hr>';
         }
     } else {
         echo "Сообщений пока нет.";
