@@ -1,22 +1,36 @@
 <?php
 $file = 'data.txt';
+
 function displayMessages($file) {
     if (file_exists($file)) {
-        $messages = array_reverse(file($file));
+        $fileContent = file_get_contents($file);
+        $messages = explode("---END---", $fileContent);
+        $messages = array_reverse($messages);
+
         foreach ($messages as $message) {
-        echo '<div>' . nl2br(htmlspecialchars($message)) . '</div><hr>';
+            $formattedMessage = trim($message);
+            if (!empty($formattedMessage)) {
+                echo '<div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background-color: #f9f9f9;">';
+                echo nl2br(htmlspecialchars($formattedMessage, ENT_QUOTES));
+                echo '</div>';
+            }
         }
     } else {
-        echo "Сообщений пока нет.";
+        echo "<p>Сообщений пока нет.</p>";
     }
 }
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $message = trim($_POST['message']);
+
     if ($name && $email && $message) {
         $date = date('Y-m-d H:i:s');
-        $newMessage = "Имя: $name\nEmail: $email\nДата: $date\nСообщение: $message\n---\n";
+        $name = htmlspecialchars($name, ENT_QUOTES);
+        $email = htmlspecialchars($email, ENT_QUOTES);
+        $message = htmlspecialchars($message, ENT_QUOTES);
+        $newMessage = "Имя: $name\nEmail: $email\nДата: $date\nСообщение:\n$message\n---END---\n";
         file_put_contents($file, $newMessage, FILE_APPEND);
     }
 }
